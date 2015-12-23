@@ -1,5 +1,53 @@
 package kollektiv
 
+object Kollektiv2 extends App {
+
+  type Number = Double
+
+  val minimumWage: Number = 800
+
+//  val minCharity: Number = 2400
+//
+//  val fullCharity: Number = 4800
+//
+//  val charityTaxRate = 0.5
+//
+//  def charity(net: Number): Number = {
+//    if(net < minCharity) 0
+//    else if(net < fullCharity) (net - minCharity) * charityTaxRate
+//    else net - (minCharity + (fullCharity - minCharity) * charityTaxRate)
+//  }
+
+  def charity(hours: Number, income: Number): Number =
+    0 // noch zu definierende Formel. Das Resultat sollte <= income sein
+
+  def wages(profit: Number, hours: Map[String, Number]): (Map[String, Number], Number) = {
+    val workers = hours.keys
+    val n = workers.size
+    val expenses = n * minimumWage
+    if(profit <= expenses) {
+      val wages = workers.map(_ -> profit / n).toMap
+      val totalCharity = 0
+      (wages, totalCharity)
+    }
+    else {
+      val taxRate = expenses / profit
+      val profitPerHour = profit / hours.values.sum
+      var totalCharity: Number = 0
+      val wages = workers.map(name => name -> {
+        val gross = hours(name) * profitPerHour
+        val net = gross * (1 - taxRate)
+        val c = charity(hours(name), net)
+        totalCharity += c
+        minimumWage + net - c
+      }).toMap
+      (wages, totalCharity)
+    }
+  }
+
+  println(wages(10000, Map("martin" -> 40, "sven" -> 20)))
+}
+
 object Kollektiv extends App {
 
   type Number = Double
